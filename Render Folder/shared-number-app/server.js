@@ -7,11 +7,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Add event listeners for button clicks
   document.querySelector("button:nth-of-type(1)").addEventListener("click", function() {
-    updateValue(5); // Call the update function to add 5
+    updateValue(5); // Add 5 to the value on the server
   });
 
   document.querySelector("button:nth-of-type(2)").addEventListener("click", function() {
-    updateValue(-5); // Call the update function to subtract 5
+    updateValue(-5); // Subtract 5 from the value on the server
   });
 });
 
@@ -20,7 +20,7 @@ async function fetchValue() {
   try {
     const response = await fetch(`${apiUrl}/value`);
     const data = await response.json();
-    document.getElementById("valueDisplay").textContent = data.value; // Update display
+    document.getElementById("valueDisplay").textContent = data.value; // Update the displayed value
   } catch (error) {
     console.error("Error fetching value:", error);
     document.getElementById("valueDisplay").textContent = "Error loading value";
@@ -38,7 +38,7 @@ async function updateValue(increment) {
       body: JSON.stringify({ increment })
     });
     const data = await response.json();
-    document.getElementById("valueDisplay").textContent = data.value; // Update display
+    document.getElementById("valueDisplay").textContent = data.value; // Update the displayed value
   } catch (error) {
     console.error("Error updating value:", error);
   }
