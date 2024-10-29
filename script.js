@@ -1,26 +1,37 @@
-// Ensure the DOM is loaded before running script
+const apiUrl = 'https://chicago.onrender.com'; // Update with your Render URL
+
+// Ensure the DOM is loaded before running the script
 document.addEventListener("DOMContentLoaded", function() {
-  // Retrieve saved value from localStorage or initialize to 0 if not set
-  let currentValue = parseInt(localStorage.getItem("currentValue")) || 0;
+  fetchValue(); // Fetch and display initial value
 
-  // Display the initial value
-  document.getElementById("currentValue").textContent = currentValue;
-
-  // Add event listener for button click
-  document.getElementById("addButton").addEventListener("click", function() {
-    // Log current value for debugging
-    console.log("Current value before adding 5:", currentValue);
-
-    // Add 5 to current value
-    currentValue += 5;
-
-    // Save updated value to localStorage
-    localStorage.setItem("currentValue", currentValue);
-
-    // Update display with new value
-    document.getElementById("currentValue").textContent = currentValue;
-
-    // Log updated value for debugging
-    console.log("Current value after adding 5:", currentValue);
-  });
+  // Button actions
+  document.querySelector("button:nth-of-type(1)").addEventListener("click", () => updateValue(5));
+  document.querySelector("button:nth-of-type(2)").addEventListener("click", () => updateValue(-5));
 });
+
+// Fetch current value from the server
+async function fetchValue() {
+  try {
+    const response = await fetch(`${apiUrl}/value`);
+    const data = await response.json();
+    document.getElementById("valueDisplay").textContent = data.value;
+  } catch (error) {
+    console.error("Error fetching value:", error);
+    document.getElementById("valueDisplay").textContent = "Error loading value";
+  }
+}
+
+// Update value on the server
+async function updateValue(increment) {
+  try {
+    const response = await fetch(`${apiUrl}/value`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ increment })
+    });
+    const data = await response.json();
+    document.getElementById("valueDisplay").textContent = data.value;
+  } catch (error) {
+    console.error("Error updating value:", error);
+  }
+}
