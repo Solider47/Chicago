@@ -1,25 +1,45 @@
-const express = require("express");
-const app = express();
-const PORT = process.env.PORT || 3000;
+const apiUrl = 'https://chicago.onrender.com'; // Use your Render URL
 
-let sharedNumber = 0;
+// Ensure the DOM is loaded before running the script
+document.addEventListener("DOMContentLoaded", function() {
+  // Fetch and display the initial value
+  fetchValue();
 
-app.use(express.json());
+  // Add event listeners for button clicks
+  document.querySelector("button:nth-of-type(1)").addEventListener("click", function() {
+    updateValue(5); // Call the update function to add 5
+  });
 
-app.get("/value", (req, res) => {
-  res.json({ value: sharedNumber });
+  document.querySelector("button:nth-of-type(2)").addEventListener("click", function() {
+    updateValue(-5); // Call the update function to subtract 5
+  });
 });
 
-app.post("/value", (req, res) => {
-  const { increment } = req.body;
-  if (typeof increment === "number") {
-    sharedNumber += increment;
-    res.json({ value: sharedNumber });
-  } else {
-    res.status(400).json({ error: "Increment must be a number" });
+// Fetch the current value from the server
+async function fetchValue() {
+  try {
+    const response = await fetch(`${apiUrl}/value`);
+    const data = await response.json();
+    document.getElementById("valueDisplay").textContent = data.value; // Update display
+  } catch (error) {
+    console.error("Error fetching value:", error);
+    document.getElementById("valueDisplay").textContent = "Error loading value";
   }
-});
+}
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Update the value on the server
+async function updateValue(increment) {
+  try {
+    const response = await fetch(`${apiUrl}/value`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ increment })
+    });
+    const data = await response.json();
+    document.getElementById("valueDisplay").textContent = data.value; // Update display
+  } catch (error) {
+    console.error("Error updating value:", error);
+  }
+}
